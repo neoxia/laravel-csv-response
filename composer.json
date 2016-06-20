@@ -4,5 +4,10 @@
     "require": {
         "php": ">=5.5.9",
         "illuminate/routing": "5.1.*|5.2.*"
+    },
+    "autoload": {
+         "psr-4": {
+            "Neoxia\\": "src/Neoxia/"
+        }
     }
 }
