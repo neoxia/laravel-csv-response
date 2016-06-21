@@ -6,16 +6,16 @@ use Illuminate\Routing\ResponseFactory as BaseResponseFactory;
 
 class ResponseFactory extends BaseResponseFactory
 {
-    public function csv($data, $status = 200, array $headers = [])
+    public function csv($data)
     {
         if ($data->isEmpty()) {
-            return $this->make('No content', 204);
+            return $this->make('No Content', 204);
         }
 
         $csv = $this->formatCsv($data);
-        $headers = $this->createCsvHeaders($headers);
+        $headers = $this->createCsvHeaders();
 
-        return $this->make($csv, $status, $headers);
+        return $this->make($csv, 200, $headers);
     }
 
     protected function formatCsv($data)
@@ -26,20 +26,16 @@ class ResponseFactory extends BaseResponseFactory
             $csv .= "\r\n" . implode(';', $row->csvSerialize());
         }
 
-        $csv = mb_convert_encoding($csv, 'WINDOWS-1252');
-
         return $csv;
     }
 
-    protected function createCsvHeaders($additionalHeaders = [])
+    protected function createCsvHeaders()
     {
-        $baseHeaders = [
+        return [
             'Content-Type' => 'text/csv; charset=WINDOWS-1252',
             'Content-Encoding' => 'WINDOWS-1252',
             'Content-Transfer-Encoding' => 'binary',
             'Content-Description' => 'File Transfer',
         ];
-
-        return array_merge($baseHeaders, $additionalHeaders);
     }
 }
