@@ -46,7 +46,25 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("No Content", $response->getContent());
     }
 
-    public function testCsvResponseWithCollectionData()
+    public function testCsvResponseWithCollectionOfObjectsData()
+    {
+        $data = new Collection([new ModelStub(['first_name' => 'John', 'last_name' => 'Doe'])]);
+
+        $response = $this->responseFactory->csv($data);
+
+        $this->assertCsvResponseIsValidAndEquals($response, "first_name;last_name\r\nJohn;Doe");
+    }
+
+    public function testCsvResponseWithCollectionOfArrayData()
+    {
+        $data = new Collection([['first_name' => 'John', 'last_name' => 'Doe']]);
+
+        $response = $this->responseFactory->csv($data);
+
+        $this->assertCsvResponseIsValidAndEquals($response, "first_name;last_name\r\nJohn;Doe");
+    }
+
+    public function testCsvResponseWithArrayOfObjectsData()
     {
         $data = new Collection([new ModelStub(['first_name' => 'John', 'last_name' => 'Doe'])]);
 
