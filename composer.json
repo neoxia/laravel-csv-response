@@ -4,7 +4,8 @@
     "description": "Add a csv response type to Laravel",
     "require": {
         "php": ">=5.5.9",
-        "illuminate/routing": "5.1.*|5.2.*"
+        "illuminate/routing": "5.1.*|5.2.*",
+        "satooshi/php-coveralls": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.8.*",
