@@ -14,22 +14,23 @@ class ResponseFactory extends BaseResponseFactory
      * @param  \Illuminate\Support\Collection|array|string  $data
      * @param  int  $status
      * @param  array  $headers
+     * @param  string  $encoding
      * @return \Illuminate\Http\Response
      */
-    public function csv($data, $status = 200, $headers = [])
+    public function csv($data, $status = 200, $headers = [], $encoding = 'WINDOWS-1252')
     {
         if ($this->dataIsEmpty($data)) {
             return $this->make('No Content', 204);
         }
 
-        $csv = $this->formatCsv($data);
-        $headers = $this->createCsvHeaders($headers);
+        $csv = $this->formatCsv($data, $encoding);
+        $headers = $this->createCsvHeaders($headers, $encoding);
 
         return $this->make($csv, $status, $headers);
     }
 
     /**
-     * Check if an array a string or a Collection is empty
+     * Check if an array, a string or a Collection is empty
      *
      * @param  \Illuminate\Support\Collection|array|string  $data
      * @return bool
@@ -47,20 +48,23 @@ class ResponseFactory extends BaseResponseFactory
      * Convert any data into a CSV string
      *
      * @param  \Illuminate\Support\Collection|array|string  $data
+     * @param  string  $encoding
      * @return string
      */
-    protected function formatCsv($data)
+    protected function formatCsv($data, $encoding)
     {
         if (is_string($data)) {
-            return $data;
+            $csv = $data;
+        } else {        
+            $csvArray = [];
+
+            $this->addHeaderToCsvArray($csvArray, $data);
+            $this->addRowsToCsvArray($csvArray, $data);
+
+            $csv = implode("\r\n", $csvArray);
         }
 
-        $csvArray = [];
-
-        $this->addHeaderToCsvArray($csvArray, $data);
-        $this->addRowsToCsvArray($csvArray, $data);
-
-        return implode("\r\n", $csvArray);
+        return mb_convert_encoding($csv, $encoding);
     }
 
     /**
@@ -112,13 +116,14 @@ class ResponseFactory extends BaseResponseFactory
      * Get HTTP headers for a CSV response
      *
      * @param  array  $customHeaders
+     * @param  string  $encoding
      * @return void
      */
-    protected function createCsvHeaders($customHeaders)
+    protected function createCsvHeaders($customHeaders, $encoding)
     {
         $baseHeaders = [
-            'Content-Type' => 'text/csv; charset=WINDOWS-1252',
-            'Content-Encoding' => 'WINDOWS-1252',
+            'Content-Type' => 'text/csv; charset=' . $encoding,
+            'Content-Encoding' => $encoding,
             'Content-Transfer-Encoding' => 'binary',
             'Content-Description' => 'File Transfer',
         ];

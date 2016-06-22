@@ -131,6 +131,28 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('ASCII', $response->headers->get('Content-Encoding'));
         $this->assertEquals('Cookie: $Version=1;', $response->headers->get('Cookie'));
     }
+
+    public function testCsvEncodeDataInWINDOWS1252()
+    {
+        $data = "first_name;last_name\r\nÉléonore;Doe";
+
+        $response = $this->responseFactory->csv($data);
+
+        $expectedResponse = mb_convert_encoding("first_name;last_name\r\nÉléonore;Doe", 'WINDOWS-1252');
+        $this->assertEquals($expectedResponse, $response->getContent());
+    }
+
+    public function testCsvCanEncodeDataInCustomEncoding()
+    {
+        $data = "first_name;last_name\r\nÉléonore;Doe";
+
+        $response = $this->responseFactory->csv($data, 200, [], 'UTF-8');
+
+        $expectedResponse = mb_convert_encoding("first_name;last_name\r\nÉléonore;Doe", 'UTF-8');
+        $this->assertEquals($expectedResponse, $response->getContent());
+        $this->assertEquals('text/csv; charset=UTF-8', $response->headers->get('Content-Type'));
+        $this->assertEquals('UTF-8', $response->headers->get('Content-Encoding'));
+    }
 }
 
 class ModelStub
