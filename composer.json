@@ -5,11 +5,12 @@
     "require": {
         "php": ">=5.5.9",
         "illuminate/routing": "5.1.*|5.2.*",
-        "satooshi/php-coveralls": "^1.0"
+        "illuminate/support": "5.1.*|5.2.*"
     },
     "require-dev": {
         "phpunit/phpunit": "4.8.*",
-        "mockery/mockery": "0.9.*"
+        "mockery/mockery": "0.9.*",
+        "satooshi/php-coveralls": "^1.0"
     },
     "autoload": {
          "psr-4": {
