@@ -79,7 +79,9 @@ class ResponseFactory extends BaseResponseFactory
         $firstRowData = $this->getRowData($data[0]);
 
         if (Arr::isAssoc($firstRowData)) {
-            $csvArray[0] = implode(';', array_keys($firstRowData));
+            $rowData = array_keys($firstRowData);
+
+            $csvArray[0] = $this->rowDataToCsvString($rowData);
         }
     }
 
@@ -93,7 +95,9 @@ class ResponseFactory extends BaseResponseFactory
     protected function addRowsToCsvArray(&$csvArray, $data)
     {
         foreach ($data as $row) {
-            $csvArray[] = implode(';', $this->getRowData($row));
+            $rowData = $this->getRowData($row);
+
+            $csvArray[] = $this->rowDataToCsvString($rowData);
         }
     }
 
@@ -110,6 +114,21 @@ class ResponseFactory extends BaseResponseFactory
         } else {
             return $row;
         }
+    }
+
+    /**
+     * Escape quotes and join cells of an array to make a csv row string
+     *
+     * @param  array  $row
+     * @return string
+     */
+    protected function rowDataToCsvString($row)
+    {
+        array_walk($row, function (&$cell) {
+            $cell = '"' . str_replace('"', '""', $cell) . '"';
+        });
+
+        return implode(';', $row);
     }
 
     /**

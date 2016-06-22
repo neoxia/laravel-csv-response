@@ -52,7 +52,7 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
 
         $response = $this->responseFactory->csv($data);
 
-        $this->assertCsvResponseIsValidAndEquals($response, "first_name;last_name\r\nJohn;Doe");
+        $this->assertCsvResponseIsValidAndEquals($response, "\"first_name\";\"last_name\"\r\n\"John\";\"Doe\"");
     }
 
     public function testCsvResponseWithCollectionOfArrayData()
@@ -61,7 +61,7 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
 
         $response = $this->responseFactory->csv($data);
 
-        $this->assertCsvResponseIsValidAndEquals($response, "first_name;last_name\r\nJohn;Doe");
+        $this->assertCsvResponseIsValidAndEquals($response, "\"first_name\";\"last_name\"\r\n\"John\";\"Doe\"");
     }
 
     public function testCsvResponseWithArrayOfObjectsData()
@@ -70,7 +70,7 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
 
         $response = $this->responseFactory->csv($data);
 
-        $this->assertCsvResponseIsValidAndEquals($response, "first_name;last_name\r\nJohn;Doe");
+        $this->assertCsvResponseIsValidAndEquals($response, "\"first_name\";\"last_name\"\r\n\"John\";\"Doe\"");
     }
 
     public function testCsvResponseWithSequentialArrayData()
@@ -79,7 +79,7 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
 
         $response = $this->responseFactory->csv($data);
 
-        $this->assertCsvResponseIsValidAndEquals($response, "first_name;last_name\r\nJohn;Doe");
+        $this->assertCsvResponseIsValidAndEquals($response, "\"first_name\";\"last_name\"\r\n\"John\";\"Doe\"");
     }
 
     public function testCsvResponseWithAssociativeArrayData()
@@ -88,7 +88,7 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
 
         $response = $this->responseFactory->csv($data);
 
-        $this->assertCsvResponseIsValidAndEquals($response, "first_name;last_name\r\nJohn;Doe");
+        $this->assertCsvResponseIsValidAndEquals($response, "\"first_name\";\"last_name\"\r\n\"John\";\"Doe\"");
     }
 
     public function testCsvResponseWithStringData()
@@ -152,6 +152,15 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResponse, $response->getContent());
         $this->assertEquals('text/csv; charset=UTF-8', $response->headers->get('Content-Type'));
         $this->assertEquals('UTF-8', $response->headers->get('Content-Encoding'));
+    }
+
+    public function testCsvEscapeQuotes()
+    {
+        $data = [['My comment : "This is great !"']];
+
+        $response = $this->responseFactory->csv($data, 200, [], 'UTF-8');
+
+        $this->assertEquals("\"My comment : \"\"This is great !\"\"\"", $response->getContent());
     }
 }
 
