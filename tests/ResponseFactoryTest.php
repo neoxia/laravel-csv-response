@@ -84,11 +84,34 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
 
     protected function assertCsvResponseIsValidAndEquals($response, $csvBody)
     {
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals($csvBody, $response->getContent());
         $this->assertEquals('text/csv; charset=WINDOWS-1252', $response->headers->get('Content-Type'));
         $this->assertEquals('WINDOWS-1252', $response->headers->get('Content-Encoding'));
         $this->assertEquals('binary', $response->headers->get('Content-Transfer-Encoding'));
         $this->assertEquals('File Transfer', $response->headers->get('Content-Description'));
+    }
+
+    public function testCsvResponseWithCustomStatusCode()
+    {
+        $data = "first_name;last_name\r\nJohn;Doe";
+
+        $response = $this->responseFactory->csv($data, 201);
+
+        $this->assertEquals(201, $response->getStatusCode());
+    }
+
+    public function testCsvResponseWithCustomHeaders()
+    {
+        $data = "first_name;last_name\r\nJohn;Doe";
+
+        $response = $this->responseFactory->csv($data, 200, [
+            'Content-Encoding' => 'ASCII',
+            'Cookie' => 'Cookie: $Version=1;',
+        ]);
+
+        $this->assertEquals('ASCII', $response->headers->get('Content-Encoding'));
+        $this->assertEquals('Cookie: $Version=1;', $response->headers->get('Cookie'));
     }
 }
 

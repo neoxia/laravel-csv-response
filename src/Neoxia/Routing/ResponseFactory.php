@@ -8,16 +8,16 @@ use Illuminate\Routing\ResponseFactory as BaseResponseFactory;
 
 class ResponseFactory extends BaseResponseFactory
 {
-    public function csv($data)
+    public function csv($data, $status = 200, $headers = [])
     {
         if ($this->dataIsEmpty($data)) {
             return $this->make('No Content', 204);
         }
 
         $csv = $this->formatCsv($data);
-        $headers = $this->createCsvHeaders();
+        $headers = $this->createCsvHeaders($headers);
 
-        return $this->make($csv, 200, $headers);
+        return $this->make($csv, $status, $headers);
     }
 
     protected function dataIsEmpty($data)
@@ -68,13 +68,15 @@ class ResponseFactory extends BaseResponseFactory
         }
     }
 
-    protected function createCsvHeaders()
+    protected function createCsvHeaders($customHeaders)
     {
-        return [
+        $baseHeaders = [
             'Content-Type' => 'text/csv; charset=WINDOWS-1252',
             'Content-Encoding' => 'WINDOWS-1252',
             'Content-Transfer-Encoding' => 'binary',
             'Content-Description' => 'File Transfer',
         ];
+
+        return array_merge($baseHeaders, $customHeaders);
     }
 }
