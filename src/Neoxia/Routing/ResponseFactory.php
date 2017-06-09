@@ -30,14 +30,14 @@ class ResponseFactory extends BaseResponseFactory
     }
 
     /**
-     * Check if an array, a string or a Collection is empty
+     * Check if the data set is empty
      *
-     * @param  \Illuminate\Support\Collection|array|string  $data
+     * @param  mixed  $data
      * @return bool
      */
     protected function dataIsEmpty($data)
     {
-        if ($data instanceof Collection) {
+        if (method_exists($data, 'isEmpty')) {
             return $data->isEmpty();
         } else {
             return empty($data);
