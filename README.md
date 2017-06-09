@@ -1,9 +1,10 @@
-[![Build Status](https://travis-ci.org/neoxia/laravel-csv-response.svg?branch=master)](https://travis-ci.org/neoxia/laravel-csv-response)
-[![Coverage Status](https://coveralls.io/repos/github/neoxia/laravel-csv-response/badge.svg?branch=master)](https://coveralls.io/github/neoxia/laravel-csv-response?branch=master)
+[![Latest Stable Version](http://img.shields.io/github/release/neoxia/laravel-csv-response.svg)](https://packagist.org/packages/neoxia/laravel-csv-response)
+[![Build Status](http://img.shields.io/travis/neoxia/laravel-csv-response.svg)](https://travis-ci.org/neoxia/laravel-csv-response)
+[![Coverage Status](http://img.shields.io/coveralls/neoxia/laravel-csv-response.svg)](https://coveralls.io/github/neoxia/laravel-csv-response?branch=master)
 
 ## Laravel CSV Response
 
-This package adds a CSV response type to the Laravel ResponseFactory class. Because CSV is a data format, just like JSON, it should be possible to respond to a request with this format.
+This package adds a CSV response type to the Laravel `ResponseFactory` class. Because CSV is a data format, just like JSON, it should be possible to respond to a request with this format.
 
 ```PHP
 $data = [
@@ -25,17 +26,11 @@ If you want to generate CSV (or Excel) files with a lot of options and more robu
 
 ## Installation
 
-In order to install this package, you have to add `neoxia/laravel-csv-response` in your `composer.json`.
+In order to install this package, add `neoxia/laravel-csv-response` in `composer.json`.
 
 ```JS
-"repositories": [
-    {
-        "type": "vcs",
-        "url": "https://github.com/neoxia/laravel-csv-response"
-    }
-],
 "require": {
-    "neoxia/laravel-csv-response": "master"
+    "neoxia/laravel-csv-response": "1.0.*"
 },
 ```
 
