@@ -39,9 +39,9 @@ class ResponseFactory extends BaseResponseFactory
     {
         if (method_exists($data, 'isEmpty')) {
             return $data->isEmpty();
-        } else {
-            return empty($data);
         }
+
+        return empty($data);
     }
 
     /**
@@ -111,9 +111,9 @@ class ResponseFactory extends BaseResponseFactory
     {
         if (is_object($row)) {
             return $row->csvSerialize();
-        } else {
-            return $row;
         }
+
+        return $row;
     }
 
     /**
