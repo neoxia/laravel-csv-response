@@ -14,10 +14,10 @@ class ResponseFactory extends BaseResponseFactory
      * @param  \Illuminate\Support\Collection|array|string  $data
      * @param  int  $status
      * @param  array  $headers
-     * @param  string  $encoding
+     * @param  array  $options
      * @return \Illuminate\Http\Response
      */
-    public function csv($data, $status = 200, $headers = [], $options = [])
+    public function csv($data, $status = 200, array $headers = [], array $options = [])
     {
         if ($this->dataIsEmpty($data)) {
             return $this->make('No Content', 204);
@@ -37,7 +37,7 @@ class ResponseFactory extends BaseResponseFactory
      * @param  array  $customOptions
      * @return array
      */
-    public function parseOptions($customOptions)
+    public function parseOptions(array $customOptions)
     {
         $baseOptions = [
             'encoding' => 'WINDOWS-1252',
@@ -51,7 +51,7 @@ class ResponseFactory extends BaseResponseFactory
     /**
      * Check if the data set is empty
      *
-     * @param  mixed  $data
+     * @param  \Illuminate\Support\Collection|array|string  $data
      * @return bool
      */
     protected function dataIsEmpty($data)
@@ -67,10 +67,10 @@ class ResponseFactory extends BaseResponseFactory
      * Convert any data into a CSV string
      *
      * @param  \Illuminate\Support\Collection|array|string  $data
-     * @param  string  $encoding
+     * @param  array  $options
      * @return string
      */
-    protected function formatCsv($data, $options)
+    protected function formatCsv($data, array $options)
     {
         if (is_string($data)) {
             $csv = $data;
@@ -91,9 +91,10 @@ class ResponseFactory extends BaseResponseFactory
      *
      * @param  array  $csvArray
      * @param  \Illuminate\Support\Collection|array  $data
+     * @param  array  $options
      * @return void
      */
-    protected function addHeaderToCsvArray(&$csvArray, $data, $options)
+    protected function addHeaderToCsvArray(array &$csvArray, $data, array $options)
     {
         $firstRowData = $this->getRowData($data[0]);
 
@@ -109,9 +110,10 @@ class ResponseFactory extends BaseResponseFactory
      *
      * @param  array  $csvArray
      * @param  \Illuminate\Support\Collection|array  $data
+     * @param  array  $options
      * @return void
      */
-    protected function addRowsToCsvArray(&$csvArray, $data, $options)
+    protected function addRowsToCsvArray(array &$csvArray, $data, array $options)
     {
         foreach ($data as $row) {
             $rowData = $this->getRowData($row);
@@ -139,9 +141,10 @@ class ResponseFactory extends BaseResponseFactory
      * Escape quotes and join cells of an array to make a csv row string
      *
      * @param  array  $row
+     * @param  array  $options
      * @return string
      */
-    protected function rowDataToCsvString($row, $options)
+    protected function rowDataToCsvString(array $row, array $options)
     {
         if ($options['quoted']) {
             array_walk($row, function (&$cell) {
@@ -156,10 +159,10 @@ class ResponseFactory extends BaseResponseFactory
      * Get HTTP headers for a CSV response
      *
      * @param  array  $customHeaders
-     * @param  string  $encoding
+     * @param  array  $options
      * @return void
      */
-    protected function createCsvHeaders($customHeaders, $options)
+    protected function createCsvHeaders(array $customHeaders, array $options)
     {
         $baseHeaders = [
             'Content-Type' => 'text/csv; charset=' . $options['encoding'],
