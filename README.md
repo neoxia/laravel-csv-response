@@ -30,7 +30,7 @@ In order to install this package, add `neoxia/laravel-csv-response` in `composer
 
 ```JS
 "require": {
-    "neoxia/laravel-csv-response": "1.0.*"
+    "neoxia/laravel-csv-response": "1.1.*"
 },
 ```
 
@@ -64,7 +64,6 @@ response()->csv([
 ]);
 
 response()->csv("first_name;last_name\r\nJohn;Doe\r\nJane;Doe");
-
 ```
 
 ### Objects as rows
@@ -85,7 +84,6 @@ class User
 		];
 	}
 }
-
 ```
 
 ### CSV first row
@@ -93,3 +91,44 @@ class User
 When the "rows" of the data collection are associative arrays or objects, the package use the keys of the first row to define the first row of the CSV response. This first row is generaly used as column titles in this type of file.
 
 In order to have a consistent response, you have to be sure that every row in the data collection has the same number of values and the keys in the same order.
+
+### Other parameters
+
+The `csv()` function declaration, based on Laravel `json()` function, is the following.
+
+```PHP
+public function csv($data, $status = 200, array $headers = [], array $options = [])
+```
+
+#### Status
+
+Typically, you should return your CSV with status *200 Ok* but you are allowed to be imaginative. Maybe are you building a full REST-CSV API ;)
+
+#### Headers
+
+The default headers for this response are the following but you can overwrite it.
+
+```PHP
+[
+    'Content-Type' => 'text/csv; charset=WINDOWS-1252',
+    'Content-Encoding' => 'WINDOWS-1252',
+    'Content-Transfer-Encoding' => 'binary',
+    'Content-Description' => 'File Transfer',
+]
+```
+
+Note that the default charset and encoding are automatically overwrited if a custom encoding is specified in the options (see below).
+
+#### Options
+
+The last argument lets you define how the CSV is built and formated. We have defined a format that fits very well in most cases but the optimal configuration may depend on your environment (language, Microsoft Office version, etc.).
+
+The default options are the following.
+
+```PHP
+[
+    'encoding' => 'WINDOWS-1252',
+    'delimiter' => ';',
+    'quoted' => true,
+]
+```
