@@ -100,16 +100,6 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertCsvResponseIsValidAndEquals($response, "first_name;last_name\r\nJohn;Doe");
     }
 
-    protected function assertCsvResponseIsValidAndEquals($response, $csvBody)
-    {
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals($csvBody, $response->getContent());
-        $this->assertEquals('text/csv; charset=WINDOWS-1252', $response->headers->get('Content-Type'));
-        $this->assertEquals('WINDOWS-1252', $response->headers->get('Content-Encoding'));
-        $this->assertEquals('binary', $response->headers->get('Content-Transfer-Encoding'));
-        $this->assertEquals('File Transfer', $response->headers->get('Content-Description'));
-    }
-
     public function testCsvResponseWithCustomStatusCode()
     {
         $data = "first_name;last_name\r\nJohn;Doe";
@@ -146,7 +136,7 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
     {
         $data = "first_name;last_name\r\nÉléonore;Doe";
 
-        $response = $this->responseFactory->csv($data, 200, [], 'UTF-8');
+        $response = $this->responseFactory->csv($data, 200, [], ['encoding' => 'UTF-8']);
 
         $expectedResponse = mb_convert_encoding("first_name;last_name\r\nÉléonore;Doe", 'UTF-8');
         $this->assertEquals($expectedResponse, $response->getContent());
@@ -154,13 +144,41 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('UTF-8', $response->headers->get('Content-Encoding'));
     }
 
+    public function testCsvCanFormatWithCustomDelimiter()
+    {
+        $data = [['first_name' => 'John', 'last_name' => 'Doe']];
+
+        $response = $this->responseFactory->csv($data, 200, [], ['delimiter' => ',']);
+
+        $this->assertCsvResponseIsValidAndEquals($response, "\"first_name\",\"last_name\"\r\n\"John\",\"Doe\"");
+    }
+
+    public function testCsvCanFormatWithoutQuotes()
+    {
+        $data = [['first_name' => 'John', 'last_name' => 'Doe']];
+
+        $response = $this->responseFactory->csv($data, 200, [], ['quoted' => false]);
+
+        $this->assertCsvResponseIsValidAndEquals($response, "first_name;last_name\r\nJohn;Doe");
+    }
+
     public function testCsvEscapeQuotes()
     {
         $data = [['My comment : "This is great !"']];
 
-        $response = $this->responseFactory->csv($data, 200, [], 'UTF-8');
+        $response = $this->responseFactory->csv($data, 200, []);
 
-        $this->assertEquals("\"My comment : \"\"This is great !\"\"\"", $response->getContent());
+        $this->assertCsvResponseIsValidAndEquals($response, "\"My comment : \"\"This is great !\"\"\"");
+    }
+
+    protected function assertCsvResponseIsValidAndEquals($response, $csvBody)
+    {
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals($csvBody, $response->getContent());
+        $this->assertEquals('text/csv; charset=WINDOWS-1252', $response->headers->get('Content-Type'));
+        $this->assertEquals('WINDOWS-1252', $response->headers->get('Content-Encoding'));
+        $this->assertEquals('binary', $response->headers->get('Content-Transfer-Encoding'));
+        $this->assertEquals('File Transfer', $response->headers->get('Content-Description'));
     }
 }
 

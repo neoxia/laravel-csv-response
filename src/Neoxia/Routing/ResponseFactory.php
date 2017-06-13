@@ -17,16 +17,35 @@ class ResponseFactory extends BaseResponseFactory
      * @param  string  $encoding
      * @return \Illuminate\Http\Response
      */
-    public function csv($data, $status = 200, $headers = [], $encoding = 'WINDOWS-1252')
+    public function csv($data, $status = 200, $headers = [], $options = [])
     {
         if ($this->dataIsEmpty($data)) {
             return $this->make('No Content', 204);
         }
 
-        $csv = $this->formatCsv($data, $encoding);
-        $headers = $this->createCsvHeaders($headers, $encoding);
+        $options = $this->parseOptions($options);
+
+        $csv = $this->formatCsv($data, $options);
+        $headers = $this->createCsvHeaders($headers, $options);
 
         return $this->make($csv, $status, $headers);
+    }
+
+    /**
+     * Return an array of options with default ones if not set
+     *
+     * @param  array  $customOptions
+     * @return array
+     */
+    public function parseOptions($customOptions)
+    {
+        $baseOptions = [
+            'encoding' => 'WINDOWS-1252',
+            'delimiter' => ';',
+            'quoted' => true,
+        ];
+
+        return array_merge($baseOptions, $customOptions);
     }
 
     /**
@@ -51,20 +70,20 @@ class ResponseFactory extends BaseResponseFactory
      * @param  string  $encoding
      * @return string
      */
-    protected function formatCsv($data, $encoding)
+    protected function formatCsv($data, $options)
     {
         if (is_string($data)) {
             $csv = $data;
-        } else {        
+        } else {
             $csvArray = [];
 
-            $this->addHeaderToCsvArray($csvArray, $data);
-            $this->addRowsToCsvArray($csvArray, $data);
+            $this->addHeaderToCsvArray($csvArray, $data, $options);
+            $this->addRowsToCsvArray($csvArray, $data, $options);
 
             $csv = implode("\r\n", $csvArray);
         }
 
-        return mb_convert_encoding($csv, $encoding);
+        return mb_convert_encoding($csv, $options['encoding']);
     }
 
     /**
@@ -74,14 +93,14 @@ class ResponseFactory extends BaseResponseFactory
      * @param  \Illuminate\Support\Collection|array  $data
      * @return void
      */
-    protected function addHeaderToCsvArray(&$csvArray, $data)
+    protected function addHeaderToCsvArray(&$csvArray, $data, $options)
     {
         $firstRowData = $this->getRowData($data[0]);
 
         if (Arr::isAssoc($firstRowData)) {
             $rowData = array_keys($firstRowData);
 
-            $csvArray[0] = $this->rowDataToCsvString($rowData);
+            $csvArray[0] = $this->rowDataToCsvString($rowData, $options);
         }
     }
 
@@ -92,12 +111,12 @@ class ResponseFactory extends BaseResponseFactory
      * @param  \Illuminate\Support\Collection|array  $data
      * @return void
      */
-    protected function addRowsToCsvArray(&$csvArray, $data)
+    protected function addRowsToCsvArray(&$csvArray, $data, $options)
     {
         foreach ($data as $row) {
             $rowData = $this->getRowData($row);
 
-            $csvArray[] = $this->rowDataToCsvString($rowData);
+            $csvArray[] = $this->rowDataToCsvString($rowData, $options);
         }
     }
 
@@ -122,13 +141,15 @@ class ResponseFactory extends BaseResponseFactory
      * @param  array  $row
      * @return string
      */
-    protected function rowDataToCsvString($row)
+    protected function rowDataToCsvString($row, $options)
     {
-        array_walk($row, function (&$cell) {
-            $cell = '"' . str_replace('"', '""', $cell) . '"';
-        });
+        if ($options['quoted']) {
+            array_walk($row, function (&$cell) {
+                $cell = '"' . str_replace('"', '""', $cell) . '"';
+            });
+        }
 
-        return implode(';', $row);
+        return implode($options['delimiter'], $row);
     }
 
     /**
@@ -138,11 +159,11 @@ class ResponseFactory extends BaseResponseFactory
      * @param  string  $encoding
      * @return void
      */
-    protected function createCsvHeaders($customHeaders, $encoding)
+    protected function createCsvHeaders($customHeaders, $options)
     {
         $baseHeaders = [
-            'Content-Type' => 'text/csv; charset=' . $encoding,
-            'Content-Encoding' => $encoding,
+            'Content-Type' => 'text/csv; charset=' . $options['encoding'],
+            'Content-Encoding' => $options['encoding'],
             'Content-Transfer-Encoding' => 'binary',
             'Content-Description' => 'File Transfer',
         ];
