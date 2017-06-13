@@ -76,13 +76,13 @@ For example :
 ```PHP
 class User
 {
-	public function csvSerialize()
-	{
-		return [
-			'first_name' => $this->first_name,
-			'last_name' => $this->last_name,
-		];
-	}
+    public function csvSerialize()
+    {
+        return [
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+        ];
+    }
 }
 ```
 
