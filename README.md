@@ -131,5 +131,6 @@ The default options are the following.
     'encoding' => 'WINDOWS-1252',
     'delimiter' => ';',
     'quoted' => true,
+    'includeHeader' => true,
 ]
 ```

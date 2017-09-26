@@ -162,6 +162,15 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertCsvResponseIsValidAndEquals($response, "first_name;last_name\r\nJohn;Doe");
     }
 
+    public function testCsvCanFormatWithoutHeader()
+    {
+        $data = [['first_name' => 'John', 'last_name' => 'Doe']];
+
+        $response = $this->responseFactory->csv($data, 200, [], ['includeHeader' => false]);
+
+        $this->assertCsvResponseIsValidAndEquals($response, "\"John\";\"Doe\"");
+    }
+
     public function testCsvEscapeQuotes()
     {
         $data = [['My comment : "This is great !"']];

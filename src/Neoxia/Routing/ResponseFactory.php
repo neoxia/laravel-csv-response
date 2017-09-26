@@ -43,6 +43,7 @@ class ResponseFactory extends BaseResponseFactory
             'encoding' => 'WINDOWS-1252',
             'delimiter' => ';',
             'quoted' => true,
+            'includeHeader' => true,
         ];
 
         return array_merge($baseOptions, $customOptions);
@@ -77,7 +78,10 @@ class ResponseFactory extends BaseResponseFactory
         } else {
             $csvArray = [];
 
-            $this->addHeaderToCsvArray($csvArray, $data, $options);
+            if ( $options['includeHeader']) {
+                $this->addHeaderToCsvArray($csvArray, $data, $options);
+            }
+
             $this->addRowsToCsvArray($csvArray, $data, $options);
 
             $csv = implode("\r\n", $csvArray);
