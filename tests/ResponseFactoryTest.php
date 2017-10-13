@@ -166,7 +166,7 @@ class ResponseFactoryTest extends PHPUnit_Framework_TestCase
     {
         $data = [['first_name' => 'John', 'last_name' => 'Doe']];
 
-        $response = $this->responseFactory->csv($data, 200, [], ['includeHeader' => false]);
+        $response = $this->responseFactory->csv($data, 200, [], ['include_header' => false]);
 
         $this->assertCsvResponseIsValidAndEquals($response, "\"John\";\"Doe\"");
     }
