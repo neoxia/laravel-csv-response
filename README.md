@@ -26,12 +26,10 @@ If you want to generate CSV (or Excel) files with a lot of options and more robu
 
 ## Installation
 
-In order to install this package, add `neoxia/laravel-csv-response` in `composer.json`.
+Require this package with composer using the following command:
 
-```JS
-"require": {
-    "neoxia/laravel-csv-response": "1.1.*"
-},
+```
+composer require neoxia/laravel-csv-response
 ```
 
 As of Laravel 5.5, this package will be automatically discovered and registered.
@@ -71,7 +69,7 @@ response()->csv("first_name;last_name\r\nJohn;Doe\r\nJane;Doe");
 
 If the "rows" of the array of data passed to the method are objects, you have to implement the `csvSerialize()` method in this objects. This method is based in the same principle than the `jsonSerialize()` method that is already implemented into an Eloquent model. It should return data as an associative array.
 
-For example :
+For example:
 
 
 ```PHP
