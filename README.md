@@ -13,7 +13,7 @@ $data = [
     ['Jane', 'Doe'],
 ];
 
-return response->csv($data);
+return response()->csv($data);
 ```
 
 This small package offers a straightforward solution that deals with conversion, from array or collection of objects to comma separated values string, and character encoding.
