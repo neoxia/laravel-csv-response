@@ -4,9 +4,9 @@ use Neoxia\Routing\ResponseFactory;
 use Illuminate\Support\Collection;
 use Mockery as m;
 
-class ResponseFactoryTest extends PHPUnit_Framework_TestCase
+class ResponseFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
